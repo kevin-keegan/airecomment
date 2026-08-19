@@ -382,9 +382,41 @@ button { cursor: pointer; }
       </div>
       <div class="hero-panel" aria-label="서비스 요약">
         <div class="panel-topline"><span>이번 달 추천 스택</span><span class="live-dot">PRICE CHECK</span></div>
-        <div class="stack-card featured-stack"><div class="mini-logo" style="background:#7357ff">K3</div><div><b>Kimi K3</b><small>장문·코딩 에이전트</small></div><strong>약 21,200원</strong></div>
-        <div class="stack-card"><div class="mini-logo" style="background:#7d2ae8">CA</div><div><b>Canva Business</b><small>디자인·마케팅 AI</small></div><strong>약 28,300원</strong></div>
-        <div class="stack-total"><div><span>월 환산 비용</span><small>연간 Kimi + Canva · 환율 1,413원</small></div><b>49,500원</b></div>
+
+        <div class="stack-card featured-stack">
+          <div class="mini-logo" style="background:#fff">
+            <img src="https://cdn.simpleicons.org/openai"
+                 alt="ChatGPT 로고"
+                 style="width:25px;height:25px;object-fit:contain">
+          </div>
+          <div>
+            <b>ChatGPT Plus</b>
+            <small>범용 업무·리서치 AI</small>
+          </div>
+          <strong id="heroGptPrice">29,000원</strong>
+        </div>
+
+        <div class="stack-card">
+          <div class="mini-logo" style="background:#fff">
+            <img src="https://cdn.simpleicons.org/figma"
+                 alt="Figma 로고"
+                 style="width:25px;height:25px;object-fit:contain">
+          </div>
+          <div>
+            <b>Figma Professional</b>
+            <small>디자인·프로토타입 AI</small>
+          </div>
+          <strong id="heroFigmaPrice">환율 계산 중</strong>
+        </div>
+
+        <div class="stack-total">
+          <div>
+            <span>월 환산 비용</span>
+            <small>ChatGPT 원화 + Figma 연간 $16 · 자동 환율</small>
+          </div>
+          <b id="heroStackTotal">계산 중</b>
+        </div>
+
         <div class="panel-metrics"><div><strong>15</strong><span>비교 도구</span></div><div><strong>100%</strong><span>공식 출처</span></div><div><strong>08.19</strong><span>최종 확인</span></div></div>
       </div>
     </section>
@@ -470,6 +502,27 @@ button { cursor: pointer; }
     }, 0);
     const hasUnknownPrice = () => selectedTools().some((tool) => monthlyPrice(tool) === null);
     const totalText = () => won(totalPrice()) + (hasUnknownPrice() ? " + 별도 확인" : "");
+
+
+    function renderFeaturedStack() {
+      const rate = Number(state.rate) || 1413;
+      const formatWon = (amount) =>
+        new Intl.NumberFormat("ko-KR").format(
+          Math.round(amount / 100) * 100
+        ) + "원";
+
+      const chatgptPrice = 29000;
+      const figmaPrice = 16 * rate;
+
+      document.getElementById("heroGptPrice").textContent =
+        formatWon(chatgptPrice);
+
+      document.getElementById("heroFigmaPrice").textContent =
+        formatWon(figmaPrice);
+
+      document.getElementById("heroStackTotal").textContent =
+        formatWon(chatgptPrice + figmaPrice);
+    }
 
     function getFilteredTools() {
       const normalized = state.query.trim().toLowerCase();
@@ -595,6 +648,7 @@ button { cursor: pointer; }
     function renderAll() {
       $("#monthlyBtn").classList.toggle("active", state.billing === "monthly");
       $("#annualBtn").classList.toggle("active", state.billing === "annual");
+      renderFeaturedStack();
       renderCategories();
       renderTools();
       renderTray();
